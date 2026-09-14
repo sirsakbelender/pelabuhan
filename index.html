@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisah Adirja x Westerling</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-center items-center p-6 font-mono">
+
+    <!-- Kotak Game -->
+    <div class="max-w-xl w-full bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 space-y-6">
+        
+        <!-- Bagian Cerita (Teks Visual Game) -->
+        <div id="story-text" class="text-lg leading-relaxed h-48 overflow-y-auto border-b border-slate-700 pb-4">
+            Memuat cerita...
+        </div>
+
+        <!-- Pilihan Tombol / Opsi Cerita -->
+        <div id="choices-container" class="flex flex-col gap-3">
+            <!-- Tombol pilihan akan muncul otomatis di sini via JS -->
+        </div>
+
+    </div>
+
+    <!-- Audio Element Sejarah / Jokes -->
+    <audio id="game-audio" preload="auto"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

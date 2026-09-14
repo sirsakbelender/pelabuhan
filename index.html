@@ -1,13 +1,34 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kisah Adirja x Westerling: Takdir di Bawah Lampu Jalan</title>
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://tailwindcss.com"></script>
+
+    <!-- Tailwind CDN yang benar -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font biar lebih cinematic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
     <style>
-        /* Efek kedip kursor ala terminal atau VN */
+        :root {
+            --neon: #f43f5e;
+            --neon-2: #6366f1;
+            --lamp: #fbbf24;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .title-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Kursor terminal */
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
@@ -15,45 +36,165 @@
         .cursor-blink::after {
             content: '_';
             animation: blink 1s infinite;
+            color: var(--neon);
+        }
+
+        /* Efek lampu jalan berkedip */
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+            20%, 24%, 55% { opacity: 0.4; }
+        }
+        .lamp-flicker {
+            animation: flicker 4s infinite;
+        }
+
+        /* Glow neon */
+        .neon-glow {
+            text-shadow: 0 0 6px rgba(244, 63, 94, 0.7),
+                         0 0 18px rgba(244, 63, 94, 0.4);
+        }
+        .neon-glow-indigo {
+            text-shadow: 0 0 6px rgba(99, 102, 241, 0.7),
+                         0 0 18px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Scrollbar custom */
+        #story-text::-webkit-scrollbar {
+            width: 6px;
+        }
+        #story-text::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #6366f1, #f43f5e);
+            border-radius: 10px;
+        }
+        #story-text::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* Tombol pilihan */
+        .choice-btn {
+            position: relative;
+            transition: all 0.25s ease;
+        }
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #6366f1, #f43f5e);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .choice-btn:hover::before {
+            opacity: 1;
+        }
+
+        /* Efek kabut / vignette */
+        .vignette::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%);
+            border-radius: inherit;
+        }
+
+        /* Animasi masuk cerita */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up {
+            animation: fadeUp 0.5s ease forwards;
+        }
+
+        /* Timer bar */
+        @keyframes drain {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+        .timer-drain {
+            animation: drain linear forwards;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 font-mono">
+
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 font-mono selection:bg-rose-500/40">
+
+    <!-- Efek lampu jalan di background -->
+    <div class="pointer-events-none fixed inset-0 overflow-hidden">
+        <div class="lamp-flicker absolute -top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-amber-400/10 blur-3xl"></div>
+        <div class="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-indigo-600/10 blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-rose-600/10 blur-3xl"></div>
+    </div>
 
     <!-- Header Judul Game -->
-    <div class="mb-6 text-center">
-        <h1 class="text-2xl md:text-3xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-rose-400 uppercase">
-            Kisah Adirja x Westerling
+    <header class="relative z-10 mb-6 text-center fade-up">
+        <p class="text-[10px] tracking-[0.4em] text-slate-500 mb-2">// VISUAL NOVEL — ABSURD EDITION</p>
+        <h1 class="title-font text-3xl md:text-5xl font-black tracking-wide">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-rose-400 neon-glow">
+                Kisah Adirja
+            </span>
+            <span class="text-slate-500 mx-1 text-2xl md:text-4xl">×</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-300 neon-glow">
+                Westerling
+            </span>
         </h1>
-        <p class="text-xs text-slate-400 mt-1 tracking-widest">VISUAL NOVEL: ABSURD EDITION</p>
-    </div>
+        <p class="text-[11px] md:text-xs text-slate-400 mt-2 tracking-[0.25em] uppercase">
+            Takdir di Bawah Lampu Jalan
+        </p>
+        <div class="mt-3 mx-auto w-24 h-px bg-gradient-to-r from-transparent via-rose-500 to-transparent"></div>
+    </header>
 
     <!-- Kotak Game Utama -->
-    <div class="max-w-xl w-full bg-slate-900/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl border border-slate-700/60 relative overflow-hidden space-y-6">
-        
-        <!-- Aksen Lampu Neon Tipis di Atas Kotak -->
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500"></div>
+    <main class="relative z-10 max-w-2xl w-full fade-up">
+        <div class="vignette relative bg-slate-900/80 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-700/60 overflow-hidden">
 
-        <!-- Bagian Cerita (Teks Visual Game) -->
-        <div id="story-text" class="text-base md:text-lg leading-relaxed h-44 overflow-y-auto border-b border-slate-800 pb-4 text-slate-300 pr-2">
-            Memuat cerita...
+            <!-- Aksen neon atas -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500 z-20"></div>
+
+            <!-- Status bar: Chapter / Timer / Nyawa -->
+            <div class="flex items-center justify-between px-6 pt-5 pb-3 border-b border-slate-800/80 text-[11px] tracking-widest uppercase">
+                <span id="chapter-label" class="text-indigo-300 neon-glow-indigo">Chapter 01</span>
+
+                <div class="flex items-center gap-2 text-slate-400">
+                    <span>⏱</span>
+                    <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div id="timer-bar" class="h-full bg-gradient-to-r from-emerald-400 to-rose-500 rounded-full"></div>
+                    </div>
+                    <span id="timer-text" class="text-slate-300 tabular-nums w-10 text-right">--s</span>
+                </div>
+
+                <span id="sanity-label" class="text-rose-300 neon-glow">SANITY ♥♥♥</span>
+            </div>
+
+            <!-- Bagian Cerita -->
+            <div id="story-text"
+                 class="relative text-[15px] md:text-base leading-relaxed h-52 md:h-56 overflow-y-auto px-6 py-5 text-slate-300 whitespace-pre-wrap">
+                <span class="text-slate-500 italic">Memuat takdir...</span>
+            </div>
+
+            <!-- Pilihan Tombol -->
+            <div id="choices-container" class="flex flex-col gap-2.5 px-6 pb-6">
+                <!-- Diisi via JS -->
+            </div>
+
         </div>
 
-        <!-- Pilihan Tombol / Opsi Cerita -->
-        <div id="choices-container" class="flex flex-col gap-3">
-            <!-- Tombol pilihan akan muncul otomatis di sini via JS -->
-        </div>
+        <!-- Hint kecil -->
+        <p class="text-center text-[10px] text-slate-600 mt-4 tracking-widest">
+            [ KLIK PILIHAN UNTUK MELANJUTKAN ] • [ KEPUTUSANMU MENENTUKAN AKHIR ]
+        </p>
+    </main>
 
-    </div>
+    <!-- Footer -->
+    <footer class="relative z-10 mt-6 text-[10px] text-slate-600 tracking-widest text-center">
+        DIBUAT KHUSUS BUAT NYINDIR CIRCLE SENDIRI &bull; 2026
+    </footer>
 
-    <!-- Footer Kecil -->
-    <div class="mt-6 text-xs text-slate-500">
-        Dibuat khusus buat nyindir circle sendiri &bull; 2026
-    </div>
-
-    <!-- Audio Element -->
+    <!-- Audio -->
     <audio id="game-audio" preload="auto"></audio>
 
+    <!-- Script -->
     <script src="script.js"></script>
 </body>
 </html>

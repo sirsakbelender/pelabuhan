@@ -13,7 +13,7 @@ const timerText        = document.getElementById('timer-text');
 //  STATE GAME
 // =========================================
 const state = {
-    sanity: 3,          // maksimal 3 hati
+    sanity: 3,
     maxSanity: 3,
     timeLeft: 0,
     timerId: null,
@@ -24,9 +24,7 @@ const state = {
 
 // =========================================
 //  DATABASE CERITA
-//  - sanityDelta: efek ke sanity setelah node ini selesai
-//  - timeLimit  : detik untuk memilih (0 = tanpa batas)
-//  - chapter    : label bab
+//  - effect: 'shake' | 'glitch' | undefined
 // =========================================
 const storyNodes = {
     1: {
@@ -36,8 +34,8 @@ const storyNodes = {
         sanityDelta: 0,
         timeLimit: 12,
         choices: [
-            { text: "⚡ Tantang dia duel 1 lawan 1", nextNode: 2, sanity: 0 },
-            { text: "☕ ikut",   nextNode: 3, sanity: 0 },
+            { text: "» Tantang dia duel 1 lawan 1", nextNode: 2, sanity: 0 },
+            { text: "» Ikut saja", nextNode: 3, sanity: 0 },
         ],
     },
     2: {
@@ -46,24 +44,26 @@ const storyNodes = {
         audio: "audio/kaget.mp3",
         sanityDelta: -3,
         timeLimit: 0,
+        effect: "shake",
         choices: [
-            { text: "🔄 Ulangi dari Awal (Penasaran)", nextNode: 1, sanity: 0, restart: true },
+            { text: "⟲ Ulangi dari awal (penasaran)", nextNode: 1, sanity: 0, restart: true },
         ],
     },
     3: {
         chapter: "Chapter 03 — Mimpi",
-        text: "Westerling hanya terdiam dan mengangguk, Adirja mengikuti Westerling kedalam rumah tua Belanda yang katanya pernah dijadikan tempat perkumpulan pemuda. Mereka berakhir duduk diatas kursi dengan 2 gelas alkohol diatas meja--perbincangan mereka cukup pendek dikarenakan Adirja tidak mau bertele-tele dengan persoalan presidennya. Westerling mengerti, karena itu dia berjalan ke lemari belakang Adirja dan.... BUAK!! \n\nTAMAT? bro keknya berakhir diatas kasur.",
+        text: "Westerling hanya terdiam dan mengangguk. Adirja mengikuti Westerling ke dalam rumah tua Belanda yang katanya pernah dijadikan tempat perkumpulan pemuda. Mereka berakhir duduk di atas kursi dengan 2 gelas alkohol di atas meja--perbincangan mereka cukup pendek dikarenakan Adirja tidak mau bertele-tele dengan persoalan presidennya. Westerling mengerti, karena itu dia berjalan ke lemari belakang Adirja dan.... BUAK!!\n\nTAMAT? bro keknya berakhir diatas kasur.",
         audio: "audio/ketawa.mp3",
         sanityDelta: +1,
         timeLimit: 0,
+        effect: "shake",
         choices: [
-            { text: "✨ Main Lagi dari Awal", nextNode: 1, sanity: 0, restart: true },
+            { text: "⟲ Main lagi dari awal", nextNode: 1, sanity: 0, restart: true },
         ],
     },
 };
 
 // =========================================
-//  AUDIO (musik latar & SFX tombol terpisah)
+//  AUDIO
 // =========================================
 let bgmAudio = null;
 function playBGM(src) {
@@ -71,29 +71,50 @@ function playBGM(src) {
     if (!bgmAudio) {
         bgmAudio = new Audio();
         bgmAudio.loop = true;
-        bgmAudio.volume = 0.35;
+        bgmAudio.volume = 0.28;
     }
     if (bgmAudio.src.endsWith(src)) return;
     bgmAudio.src = src;
     bgmAudio.play().catch(() => {});
 }
 
-// SFX sederhana pakai Web Audio (biar gak butuh file)
+// SFX Web Audio
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let actx = null;
-function blip(freq = 440, dur = 0.08, type = 'square') {
+function blip(freq = 440, dur = 0.08, type = 'square', vol = 0.08) {
     try {
         if (!actx) actx = new AudioCtx();
         const o = actx.createOscillator();
         const g = actx.createGain();
         o.type = type;
         o.frequency.value = freq;
-        g.gain.setValueAtTime(0.08, actx.currentTime);
+        g.gain.setValueAtTime(vol, actx.currentTime);
         g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
         o.connect(g).connect(actx.destination);
         o.start();
         o.stop(actx.currentTime + dur);
     } catch (_) {}
+}
+
+// Bass drop kaget
+function scareSound() {
+    blip(60, 0.7, 'sawtooth', 0.25);
+    setTimeout(() => blip(45, 0.5, 'square', 0.2), 80);
+}
+
+// =========================================
+//  EFEK VISUAL
+// =========================================
+function shakeScreen(duration = 600) {
+    document.body.classList.add('shake');
+    setTimeout(() => document.body.classList.remove('shake'), duration);
+}
+
+function flash(color = 'rgba(220,38,38,0.6)', duration = 250) {
+    const f = document.createElement('div');
+    f.style.cssText = `position:fixed;inset:0;background:${color};z-index:9999;pointer-events:none;animation:flashFade ${duration}ms ease forwards;`;
+    document.body.appendChild(f);
+    setTimeout(() => f.remove(), duration);
 }
 
 // =========================================
@@ -102,9 +123,14 @@ function blip(freq = 440, dur = 0.08, type = 'square') {
 function renderSanity() {
     const hearts = '♥'.repeat(Math.max(0, state.sanity)) +
                    '♡'.repeat(Math.max(0, state.maxSanity - state.sanity));
-    sanityLabel.textContent = `SANITY ${hearts}`;
-    sanityLabel.classList.toggle('text-rose-300', state.sanity > 1);
-    sanityLabel.classList.toggle('text-rose-500', state.sanity <= 1);
+    sanityLabel.textContent = `Sanity ${hearts}`;
+    if (state.sanity <= 1) {
+        sanityLabel.classList.add('pulse-danger');
+        sanityLabel.style.color = '#dc2626';
+    } else {
+        sanityLabel.classList.remove('pulse-danger');
+        sanityLabel.style.color = '#b91c1c';
+    }
 }
 
 function setChapter(label) {
@@ -114,12 +140,21 @@ function setChapter(label) {
 function updateTimerUI(remaining, total) {
     const pct = total > 0 ? (remaining / total) * 100 : 0;
     timerBar.style.width = pct + '%';
-    timerBar.style.background = pct > 50
-        ? 'linear-gradient(to right,#34d399,#f43f5e)'
-        : pct > 20
-            ? 'linear-gradient(to right,#fbbf24,#f43f5e)'
-            : '#ef4444';
+
+    // hijau → merah darah → hitam
+    if (pct > 60) {
+        timerBar.style.background = 'linear-gradient(to right,#7f1d1d,#b91c1c)';
+        timerBar.style.boxShadow = 'none';
+    } else if (pct > 30) {
+        timerBar.style.background = 'linear-gradient(to right,#b91c1c,#dc2626)';
+        timerBar.style.boxShadow = '0 0 8px #dc2626';
+    } else {
+        timerBar.style.background = '#ef4444';
+        timerBar.style.boxShadow = '0 0 14px #ef4444';
+    }
+
     timerText.textContent = Math.max(0, Math.ceil(remaining)) + 's';
+    timerText.style.color = pct < 40 ? '#ef4444' : '#991b1b';
 }
 
 function stopTimer() {
@@ -133,8 +168,9 @@ function startTimer(seconds, onTimeout) {
     stopTimer();
     if (!seconds || seconds <= 0) {
         timerBar.style.width = '100%';
-        timerBar.style.background = 'linear-gradient(to right,#34d399,#f43f5e)';
+        timerBar.style.background = 'linear-gradient(to right,#450a0a,#7f1d1d)';
         timerText.textContent = '∞';
+        timerText.style.color = '#7f1d1d';
         return;
     }
     state.timeLeft = seconds;
@@ -151,7 +187,7 @@ function startTimer(seconds, onTimeout) {
 }
 
 // =========================================
-//  TYPEWRITER (pakai RAF, bisa di-skip)
+//  TYPEWRITER (lambat & bertekan)
 // =========================================
 function typeWriter(text, onDone) {
     cancelAnimationFrame(state.typingId);
@@ -161,7 +197,7 @@ function typeWriter(text, onDone) {
 
     let i = 0;
     let last = performance.now();
-    const speed = 18; // ms per karakter
+    const speed = 45; // lebih lambat = lebih mencekam
 
     function step(now) {
         if (!state.isTyping) return;
@@ -169,10 +205,9 @@ function typeWriter(text, onDone) {
             last = now;
             textElement.textContent += text.charAt(i);
             i++;
-            // auto scroll
             textElement.scrollTop = textElement.scrollHeight;
-            // blip halus tiap beberapa karakter
-            if (i % 3 === 0) blip(700 + Math.random() * 300, 0.02, 'triangle');
+            // blip rendah, jarang
+            if (i % 7 === 0) blip(80 + Math.random() * 40, 0.03, 'sawtooth', 0.03);
         }
         if (i < text.length) {
             state.typingId = requestAnimationFrame(step);
@@ -184,7 +219,6 @@ function typeWriter(text, onDone) {
     }
     state.typingId = requestAnimationFrame(step);
 
-    // Skip saat klik area cerita
     const skip = () => {
         if (state.isTyping) {
             state.isTyping = false;
@@ -210,8 +244,20 @@ function startNode(nodeIndex) {
     setChapter(node.chapter);
     renderSanity();
 
-    // mainkan BGM hanya jika node punya audio
     if (node.audio) playBGM(node.audio);
+
+    // efek horor saat node muncul
+    if (node.effect === 'shake') {
+        setTimeout(() => {
+            shakeScreen(650);
+            flash('rgba(220,38,38,0.55)', 250);
+            scareSound();
+        }, 300);
+    }
+    if (node.effect === 'glitch') {
+        textElement.classList.add('glitch');
+        setTimeout(() => textElement.classList.remove('glitch'), 400);
+    }
 
     typeWriter(node.text, () => showChoices(node));
 }
@@ -221,33 +267,33 @@ function showChoices(node) {
         const button = document.createElement('button');
         button.type = 'button';
         button.className =
-            "choice-btn w-full text-left bg-slate-800/80 hover:bg-indigo-600 " +
-            "border border-slate-700 hover:border-indigo-400 text-slate-200 " +
-            "hover:text-white font-medium py-3 px-5 rounded-xl transition-all " +
-            "duration-200 transform hover:-translate-y-0.5 active:scale-[0.98] " +
-            "shadow-md text-sm md:text-[15px]";
+            "choice-btn w-full text-left bg-black/70 hover:bg-red-950/60 " +
+            "border border-red-950/80 hover:border-red-600/80 text-red-200/80 " +
+            "hover:text-red-100 font-mono py-3 px-5 rounded-none " +
+            "transition-all duration-300 transform hover:translate-x-1 " +
+            "active:scale-[0.98] text-sm md:text-[15px] tracking-wide " +
+            "shadow-[0_0_20px_rgba(127,29,29,0.15)] hover:shadow-[0_0_28px_rgba(220,38,38,0.35)]";
 
         button.textContent = choice.text;
         button.style.opacity = '0';
-        button.style.transform = 'translateY(10px)';
+        button.style.transform = 'translateX(-6px)';
         choicesContainer.appendChild(button);
 
         setTimeout(() => {
-            button.style.transition = 'all 0.3s ease';
+            button.style.transition = 'all 0.4s ease';
             button.style.opacity = '1';
-            button.style.transform = 'translateY(0)';
-        }, index * 100);
+            button.style.transform = 'translateX(0)';
+        }, index * 120);
 
         button.addEventListener('click', () => {
-            blip(520, 0.06, 'square');
+            blip(180, 0.08, 'square', 0.06);
             onChoiceSelected(choice);
         });
     });
 
-    // Timer mulai setelah pilihan muncul
     startTimer(node.timeLimit, () => {
-        // timeout → pilih opsi terburuk (index terakhir) sebagai hukuman
-        blip(180, 0.25, 'sawtooth');
+        blip(70, 0.35, 'sawtooth', 0.15);
+        shakeScreen(400);
         const bad = node.choices[node.choices.length - 1];
         onChoiceSelected(bad, true);
     });
@@ -256,31 +302,26 @@ function showChoices(node) {
 function onChoiceSelected(choice, isTimeout = false) {
     stopTimer();
 
-    // efek sanity dari pilihan
     if (typeof choice.sanity === 'number') {
         state.sanity += choice.sanity;
     }
-    // efek sanity dari node
     const node = storyNodes[state.currentNode];
     if (node && typeof node.sanityDelta === 'number' && !choice.restart) {
         state.sanity += node.sanityDelta;
     }
     renderSanity();
 
-    // cek game over karena sanity habis
     if (state.sanity <= 0 && !choice.restart) {
         gameOver();
         return;
     }
 
-    // restart?
     if (choice.restart) {
         state.sanity = state.maxSanity;
         renderSanity();
     }
 
-    // delay dikit biar transisi halus
-    setTimeout(() => startNode(choice.nextNode), 180);
+    setTimeout(() => startNode(choice.nextNode), 220);
 }
 
 function gameOver() {
@@ -290,17 +331,23 @@ function gameOver() {
     textElement.textContent =
         "Kegelapan menelan segalanya...\n\nSANITY habis. Adirja tak sanggup lagi menatap lampu jalan itu.\n\n(GAME OVER)";
 
+    // efek kematian
+    flash('rgba(0,0,0,0.95)', 900);
+    shakeScreen(700);
+    blip(40, 1.0, 'sawtooth', 0.2);
+
     choicesContainer.innerHTML = '';
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className =
-        "choice-btn w-full text-left bg-rose-900/70 hover:bg-rose-700 " +
-        "border border-rose-700 hover:border-rose-400 text-rose-100 " +
-        "font-bold py-3 px-5 rounded-xl transition-all duration-200 " +
-        "hover:-translate-y-0.5 active:scale-[0.98] shadow-md";
-    btn.textContent = "🔄 Coba Lagi dari Awal";
+        "choice-btn w-full text-left bg-red-950/70 hover:bg-red-900/80 " +
+        "border border-red-800 hover:border-red-500 text-red-100 " +
+        "font-mono py-3 px-5 rounded-none transition-all duration-300 " +
+        "hover:translate-x-1 active:scale-[0.98] tracking-widest uppercase " +
+        "shadow-[0_0_24px_rgba(220,38,38,0.4)]";
+    btn.textContent = "⟲ Coba lagi dari awal";
     btn.addEventListener('click', () => {
-        blip(300, 0.15, 'sawtooth');
+        blip(120, 0.2, 'sawtooth', 0.1);
         state.sanity = state.maxSanity;
         renderSanity();
         startNode(1);

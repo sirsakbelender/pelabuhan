@@ -52,7 +52,7 @@ const storyNodes = {
     },
     3: {
         chapter: "Chapter 03 — Mimpi",
-        text: "Westerling hanya terdiam dan mengangguk, Adirja mengikuti Westerling kedalam rumah tua Belanda yang katanya pernah dijadikan tempat perkumpulan pemuda. Mereka berakhir duduk diatas kursi dengan 2 gelas alkohol diatas meja--perbinjangan cukup penedek dikarenakan Adirja tidak mau bertele-tele dengan persoalan presidennya. Westerling mengerti, karena itu dia berjalan ke lemari belakang Adirja dan.... BUAK!! \n\nTAMAT? bro keknya berakhir diatas kasur.",
+        text: "Westerling hanya terdiam dan mengangguk, Adirja mengikuti Westerling kedalam rumah tua Belanda yang katanya pernah dijadikan tempat perkumpulan pemuda. Mereka berakhir duduk diatas kursi dengan 2 gelas alkohol diatas meja--perbincangan mereka cukup pendek dikarenakan Adirja tidak mau bertele-tele dengan persoalan presidennya. Westerling mengerti, karena itu dia berjalan ke lemari belakang Adirja dan.... BUAK!! \n\nTAMAT? bro keknya berakhir diatas kasur.",
         audio: "audio/ketawa.mp3",
         sanityDelta: +1,
         timeLimit: 0,

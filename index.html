@@ -3,17 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kisah Adirja x Westerling</title>
+    <title>Kisah Adirja x Westerling: Takdir di Bawah Lampu Jalan</title>
     <!-- Tailwind CSS via CDN -->
     <script src="https://tailwindcss.com"></script>
+    <style>
+        /* Efek kedip kursor ala terminal atau VN */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor-blink::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-center items-center p-6 font-mono">
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 font-mono">
 
-    <!-- Kotak Game -->
-    <div class="max-w-xl w-full bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 space-y-6">
+    <!-- Header Judul Game -->
+    <div class="mb-6 text-center">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-rose-400 uppercase">
+            Kisah Adirja x Westerling
+        </h1>
+        <p class="text-xs text-slate-400 mt-1 tracking-widest">VISUAL NOVEL: ABSURD EDITION</p>
+    </div>
+
+    <!-- Kotak Game Utama -->
+    <div class="max-w-xl w-full bg-slate-900/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl border border-slate-700/60 relative overflow-hidden space-y-6">
         
+        <!-- Aksen Lampu Neon Tipis di Atas Kotak -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500"></div>
+
         <!-- Bagian Cerita (Teks Visual Game) -->
-        <div id="story-text" class="text-lg leading-relaxed h-48 overflow-y-auto border-b border-slate-700 pb-4">
+        <div id="story-text" class="text-base md:text-lg leading-relaxed h-44 overflow-y-auto border-b border-slate-800 pb-4 text-slate-300 pr-2">
             Memuat cerita...
         </div>
 
@@ -24,7 +46,12 @@
 
     </div>
 
-    <!-- Audio Element Sejarah / Jokes -->
+    <!-- Footer Kecil -->
+    <div class="mt-6 text-xs text-slate-500">
+        Dibuat khusus buat nyindir circle sendiri &bull; 2026
+    </div>
+
+    <!-- Audio Element -->
     <audio id="game-audio" preload="auto"></audio>
 
     <script src="script.js"></script>

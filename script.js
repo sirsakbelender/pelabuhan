@@ -6,7 +6,7 @@ const audioPlayer = document.getElementById('game-audio');
 // Database Cerita, Pilihan, dan Suara
 const storyNodes = {
     1: {
-        text: "Tahun 1947. Suasana malam terasa dingin. Adirja berdiri di bawah lampu jalan, menatap bayangan seorang pria tegap bertopi baret. Itu Westerling. 'Mau apa kamu ke sini?', tanya Adirja gemetar.",
+        text: "Tahun 1947. Suasana malam terasa dingin. Adirja berdiri di bawah lampu jalan, menatap bayangan seorang pria tegap bertopi baret. Itu Westerling. 'Mau apa kamu ke sini?', tanya Adirja dengan serius.",
         audio: "audio/bgm.mp3", // Ganti dengan file audio lu
         choices: [
             { text: "Tantang dia duel 1 lawan 1", nextNode: 2 },

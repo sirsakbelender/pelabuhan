@@ -31,18 +31,18 @@ const state = {
 const storyNodes = {
     1: {
         chapter: "Chapter 01 — Perjumpaan",
-        text: "Tahun 1947. Suasana malam terasa dingin menusuk tulang. Adirja berdiri di bawah temaram lampu jalan, menatap bayangan seorang pria tegap bertopi baret. Itu Westerling. Dengan suara bergetar, Adirja bertanya: 'Mau apa kamu ke sini?!'",
+        text: "Tahun 1947. Suasana malam terasa dingin menusuk tulang. Adirja berdiri di bawah temaram lampu jalan, menatap bayangan seorang pria tegap bertopi baret. Itu Westerling. Dengan suara datar yang mengganggu, Westerling bertanya: 'Mau kemana? sini, ikut bersama saya dulu sebentar. Ada hal yang sangat penting berkaitan tentang presiden mu itu.'",
         audio: "audio/bgm.mp3",
         sanityDelta: 0,
         timeLimit: 12,
         choices: [
-            { text: "⚡ Tantang dia duel 1 lawan 1 cara jantan", nextNode: 2, sanity: 0 },
-            { text: "☕ Ajak dia ngopi bareng biar gak tegang",   nextNode: 3, sanity: 0 },
+            { text: "⚡ Tantang dia duel 1 lawan 1", nextNode: 2, sanity: 0 },
+            { text: "☕ ikut",   nextNode: 3, sanity: 0 },
         ],
     },
     2: {
         chapter: "Chapter 02 — Tembakan",
-        text: "Adirja langsung pasang kuda-kuda silat. Westerling malah tertawa sinis, 'Hahaha, bocah kurang ajar!'. Tiba-tiba DUARR! Suara tembakan menggelegar di udara...\n\nGAME OVER. (Yah, lu mati konyol, dek).",
+        text: "Adirja langsung maju. Westerling tidak tunggu lama langsung melesat maju. Tiba-tiba BUAAK!! Adirja terjatuh ke tanah setelah Westerling menendang lehernya...\n\nGAME OVER. (Yah, lu mati konyol, dek).",
         audio: "audio/kaget.mp3",
         sanityDelta: -3,
         timeLimit: 0,
@@ -51,8 +51,8 @@ const storyNodes = {
         ],
     },
     3: {
-        chapter: "Chapter 03 — Kopi Hitam",
-        text: "Westerling tertegun. Sorot matanya melunak. Dia perlahan menurunkan senjatanya dan tersenyum tipis. 'Kopi hitam tanpa gula, ya,' bisiknya. Adirja tersipu malu di bawah lampu sejarah. Persahabatan tak terduga pun dimulai.\n\nTAMAT? (Ending paling wibu sejarah).",
+        chapter: "Chapter 03 — Mimpi",
+        text: "Westerling hanya terdiam dan mengangguk, Adirja mengikuti Westerling kedalam rumah tua Belanda yang katanya pernah dijadikan tempat perkumpulan pemuda. Mereka berakhir duduk diatas kursi dengan 2 gelas alkohol diatas meja--perbinjangan cukup penedek dikarenakan Adirja tidak mau bertele-tele dengan persoalan presidennya. Westerling mengerti, karena itu dia berjalan ke lemari belakang Adirja dan.... BUAK!! \n\nTAMAT? bro keknya berakhir diatas kasur.",
         audio: "audio/ketawa.mp3",
         sanityDelta: +1,
         timeLimit: 0,

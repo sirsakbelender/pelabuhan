@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Di tengah laut</title>
+    <title>Lautan † Dataran — 1947</title>
 
-    <!-- Tailwind CDN yang benar -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font biar lebih cinematic -->
+    <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --neon: #f43f5e;
-            --neon-2: #6366f1;
+            --blood: #7f1d1d;
+            --blood-bright: #dc2626;
+            --bone: #e5e5e5;
             --lamp: #fbbf24;
+        }
+
+        html, body {
+            background: #000;
         }
 
         body {
@@ -28,6 +33,10 @@
             font-family: 'Playfair Display', serif;
         }
 
+        .typewriter-font {
+            font-family: 'Special Elite', 'Courier Prime', monospace;
+        }
+
         /* Kursor terminal */
         @keyframes blink {
             0%, 100% { opacity: 1; }
@@ -35,27 +44,23 @@
         }
         .cursor-blink::after {
             content: '_';
-            animation: blink 1s infinite;
-            color: var(--neon);
+            animation: blink 0.9s infinite;
+            color: var(--blood-bright);
         }
 
-        /* Efek lampu jalan berkedip */
+        /* Lampu jalan berkedip */
         @keyframes flicker {
             0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-            20%, 24%, 55% { opacity: 0.4; }
+            20%, 24%, 55% { opacity: 0.35; }
         }
         .lamp-flicker {
-            animation: flicker 4s infinite;
+            animation: flicker 5s infinite;
         }
 
-        /* Glow neon */
-        .neon-glow {
-            text-shadow: 0 0 6px rgba(244, 63, 94, 0.7),
-                         0 0 18px rgba(244, 63, 94, 0.4);
-        }
-        .neon-glow-indigo {
-            text-shadow: 0 0 6px rgba(99, 102, 241, 0.7),
-                         0 0 18px rgba(99, 102, 241, 0.4);
+        /* Glow merah darah */
+        .blood-glow {
+            text-shadow: 0 0 8px rgba(127, 29, 29, 0.9),
+                         0 0 24px rgba(69, 10, 10, 0.7);
         }
 
         /* Scrollbar custom */
@@ -63,8 +68,8 @@
             width: 6px;
         }
         #story-text::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, #6366f1, #f43f5e);
-            border-radius: 10px;
+            background: linear-gradient(to bottom, #450a0a, #7f1d1d);
+            border-radius: 0;
         }
         #story-text::-webkit-scrollbar-track {
             background: transparent;
@@ -73,41 +78,43 @@
         /* Tombol pilihan */
         .choice-btn {
             position: relative;
-            transition: all 0.25s ease;
+            transition: all 0.3s ease;
         }
         .choice-btn::before {
             content: '';
             position: absolute;
             left: 0; top: 0; bottom: 0;
-            width: 3px;
-            background: linear-gradient(to bottom, #6366f1, #f43f5e);
+            width: 2px;
+            background: linear-gradient(to bottom, #450a0a, #dc2626);
             opacity: 0;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.3s ease;
         }
         .choice-btn:hover::before {
             opacity: 1;
+            box-shadow: 0 0 12px #dc2626;
         }
 
-        /* Efek kabut / vignette */
+        /* Vignette */
         .vignette::after {
             content: '';
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%);
+            background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.75) 100%);
             border-radius: inherit;
+            z-index: 5;
         }
 
-        /* Animasi masuk cerita */
+        /* Animasi masuk */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .fade-up {
-            animation: fadeUp 0.5s ease forwards;
+            animation: fadeUp 0.6s ease forwards;
         }
 
-        /* Timer bar */
+        /* Timer */
         @keyframes drain {
             from { width: 100%; }
             to { width: 0%; }
@@ -115,80 +122,125 @@
         .timer-drain {
             animation: drain linear forwards;
         }
+
+        /* SCREEN SHAKE */
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            15% { transform: translate(-10px, 5px); }
+            30% { transform: translate(8px, -7px); }
+            45% { transform: translate(-6px, -3px); }
+            60% { transform: translate(7px, 4px); }
+            75% { transform: translate(-4px, 2px); }
+            90% { transform: translate(3px, -2px); }
+        }
+        .shake {
+            animation: shake 0.6s ease;
+        }
+
+        /* FLASH overlay */
+        @keyframes flashFade {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Heartbeat */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .pulse-danger {
+            animation: heartbeat 0.8s infinite;
+        }
+
+        /* Glitch teks */
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 1px); }
+            40% { transform: translate(2px, -1px); }
+            60% { transform: translate(-1px, -2px); }
+            80% { transform: translate(1px, 2px); }
+        }
+        .glitch {
+            animation: glitch 0.3s infinite;
+        }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 font-mono selection:bg-rose-500/40">
+<body class="bg-black text-slate-300 min-h-screen flex flex-col justify-center items-center p-4 font-mono selection:bg-red-900/70 overflow-hidden">
 
-    <!-- Efek lampu jalan di background -->
+    <!-- Overlay noise -->
+    <div class="pointer-events-none fixed inset-0 z-[60] opacity-[0.08]"
+         style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>');"></div>
+
+    <!-- Vignette global -->
+    <div class="pointer-events-none fixed inset-0 z-[55]"
+         style="background:radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.92) 100%);"></div>
+
+    <!-- Lampu jalan (satu sumber saja) -->
     <div class="pointer-events-none fixed inset-0 overflow-hidden">
-        <div class="lamp-flicker absolute -top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-amber-400/10 blur-3xl"></div>
-        <div class="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-indigo-600/10 blur-3xl"></div>
-        <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-rose-600/10 blur-3xl"></div>
+        <div class="lamp-flicker absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full"
+             style="background:radial-gradient(circle, rgba(251,191,36,0.09), transparent 70%);"></div>
     </div>
 
-    <!-- Header Judul Game -->
+    <!-- HEADER -->
     <header class="relative z-10 mb-6 text-center fade-up">
-        <p class="text-[10px] tracking-[0.4em] text-slate-500 mb-2">// ga tau ini apaan cuy</p>
-        <h1 class="title-font text-3xl md:text-5xl font-black tracking-wide">
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-rose-400 neon-glow">
-                Lautan
-            </span>
-            <span class="text-slate-500 mx-1 text-2xl md:text-4xl">%</span>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-300 neon-glow">
-                Dataran
-            </span>
-        </h1>
-        <p class="text-[11px] md:text-xs text-slate-400 mt-2 tracking-[0.25em] uppercase">
-            Westerling x Adirja
+        <p class="text-[10px] tracking-[0.5em] text-red-900/70 mb-2 lowercase">
+            // arsip yang tidak seharusnya kau buka
         </p>
-        <div class="mt-3 mx-auto w-24 h-px bg-gradient-to-r from-transparent via-rose-500 to-transparent"></div>
+        <h1 class="title-font text-3xl md:text-5xl font-black tracking-widest">
+            <span class="text-red-700 blood-glow">LAUTAN</span>
+            <span class="text-red-950 mx-2 text-2xl md:text-4xl">†</span>
+            <span class="text-red-700 blood-glow">DATARAN</span>
+        </h1>
+        <p class="text-[11px] md:text-xs text-red-950 mt-3 tracking-[0.4em] uppercase">
+            Westerling — Adirja • 1947
+        </p>
+        <div class="mt-3 mx-auto w-32 h-px bg-gradient-to-r from-transparent via-red-800 to-transparent"></div>
     </header>
 
-    <!-- Kotak Game Utama -->
+    <!-- MAIN -->
     <main class="relative z-10 max-w-2xl w-full fade-up">
-        <div class="vignette relative bg-slate-900/80 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-700/60 overflow-hidden">
+        <div class="vignette relative bg-black/95 rounded-sm shadow-[0_0_60px_rgba(127,29,29,0.3)] border border-red-950/80 overflow-hidden">
 
-            <!-- Aksen neon atas -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500 z-20"></div>
+            <!-- Aksen atas -->
+            <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-red-800 to-transparent z-20"></div>
 
-            <!-- Status bar: Chapter / Timer / Nyawa -->
-            <div class="flex items-center justify-between px-6 pt-5 pb-3 border-b border-slate-800/80 text-[11px] tracking-widest uppercase">
-                <span id="chapter-label" class="text-indigo-300 neon-glow-indigo">Chapter 01</span>
+            <!-- Status bar -->
+            <div class="flex items-center justify-between px-6 pt-5 pb-3 border-b border-red-950/60 text-[10px] tracking-[0.3em] uppercase">
+                <span id="chapter-label" class="text-red-500/90 blood-glow">Chapter 01</span>
 
-                <div class="flex items-center gap-2 text-slate-400">
-                    <span>⏱</span>
-                    <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                        <div id="timer-bar" class="h-full bg-gradient-to-r from-emerald-400 to-rose-500 rounded-full"></div>
+                <div class="flex items-center gap-2 text-red-950">
+                    <span class="text-red-800">‖</span>
+                    <div class="w-24 h-1.5 bg-red-950/40 rounded-full overflow-hidden">
+                        <div id="timer-bar" class="h-full bg-gradient-to-r from-red-900 to-red-500"></div>
                     </div>
-                    <span id="timer-text" class="text-slate-300 tabular-nums w-10 text-right">--s</span>
+                    <span id="timer-text" class="text-red-700 tabular-nums w-10 text-right">--s</span>
                 </div>
 
-                <span id="sanity-label" class="text-rose-300 neon-glow">Sanity ♥♥♥</span>
+                <span id="sanity-label" class="text-red-600 blood-glow">Sanity ♥♥♥</span>
             </div>
 
-            <!-- Bagian Cerita -->
+            <!-- Cerita -->
             <div id="story-text"
-                 class="relative text-[15px] md:text-base leading-relaxed h-52 md:h-56 overflow-y-auto px-6 py-5 text-slate-300 whitespace-pre-wrap">
-                <span class="text-slate-500 italic">Memuat takdir...</span>
+                 class="typewriter-font relative text-[16px] md:text-[17px] leading-relaxed h-52 md:h-56 overflow-y-auto px-6 py-5 text-slate-400 whitespace-pre-wrap">
+                <span class="text-red-950 italic">memuat takdir...</span>
             </div>
 
-            <!-- Pilihan Tombol -->
-            <div id="choices-container" class="flex flex-col gap-2.5 px-6 pb-6">
-                <!-- Diisi via JS -->
+            <!-- Pilihan -->
+            <div id="choices-container" class="flex flex-col gap-2.5 px-6 pb-6 pt-1">
+                <!-- diisi via JS -->
             </div>
-
         </div>
 
-        <!-- Hint kecil -->
-        <p class="text-center text-[10px] text-slate-600 mt-4 tracking-widest">
-            [ KLIK PILIHAN UNTUK MELANJUTKAN ] • [ KEPUTUSANMU MENENTUKAN AKHIR ]
+        <!-- Hint -->
+        <p class="text-center text-[10px] text-red-950/80 mt-4 tracking-[0.35em] lowercase">
+            keputusanmu akan kau sesali.
         </p>
     </main>
 
-    <!-- Footer -->
-    <footer class="relative z-10 mt-6 text-[10px] text-slate-600 tracking-widest text-center">
-        DIBUAT KHUSUS UNTUK KEDUA TOKOH &bull; 2026
+    <!-- FOOTER -->
+    <footer class="relative z-10 mt-6 text-[10px] text-red-950/70 tracking-[0.35em] text-center">
+        ARSIP 1947 &bull; JANGAN DISEBARKAN
     </footer>
 
     <!-- Audio -->
